@@ -1,4 +1,4 @@
-import { findAllUsers, findUser } from "../services/studentsService";
+import { findAllUsers, findUser, createStudentService, updateStudentService, deleteStudentService } from "../services/studentsService.js";
 
 export const getAllStudents = (req, res) => {
     try {
@@ -10,7 +10,7 @@ export const getAllStudents = (req, res) => {
 }; 
 
 export const getStudentById = (req, res) => {
-    const id = parseInt(req.param.id);
+    const id = parseInt(req.params.id);
     try {
         const student = findUser(id);
         res.status(200).json(student);
@@ -22,9 +22,7 @@ export const getStudentById = (req, res) => {
 
 export const createStudent = (req, res) => {
     try {
-        const { name, email, major, gpa } = req.body
-        const newStudent = { id: Date.now(), name, email, major, gpa }
-        createStudentService(newStudent)
+        const newStudent = createStudentService(req.body)
         res.status(201).json({ message: "Student created successfully", data: newStudent })
     } catch (error) {
         res.status(400).json({ message: error.message })
@@ -32,7 +30,7 @@ export const createStudent = (req, res) => {
 };
 
 export const updateStudent = (req, res) => {
-    const id = parseInt(req.param.id);
+    const id = parseInt(req.params.id);
     try {
         const student = updateStudentService(id, req.body);
         res.status(200).json({ message: "Student updated successfully", data: student })
@@ -42,7 +40,7 @@ export const updateStudent = (req, res) => {
 };
 
 export const deleteStudent = (req, res) => {
-    const id = parseInt(req.param.id)
+    const id = parseInt(req.params.id)
     try {
         const deleted = deleteStudentService(id)
         res.status(200).json({ message: "Student deleted successfully" })
