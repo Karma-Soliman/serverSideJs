@@ -1,71 +1,120 @@
 # Exercise 01 — File System & JSON
+# Students REST API
 
-## Goal
+A Node.js REST API built with Express 5 that manages student data. It follows a clean architecture with separated routes, controllers, and services, and includes a vanilla JS frontend to display the data.
 
-Read a JSON file, transform its data, and write the result to a Markdown file — all using Node.js built-in modules, no `npm install` needed.
+---
 
-## What you will build
+## Project Structure
 
-A script that reads `students.json` and generates a `student_report.md` file.
+```
+serverSideJs/
+├── index.js                        # Entry point — sets up Express, middleware, and routes
+├── students.js                     # Exports student data from students.json
+├── students.json                   # Local data source (acts as a mock database)
+├── package.json
+│
+├── routes/
+│   └── studentsRoute.js            # Defines all /students endpoints
+│
+├── controllers/
+│   └── studentsControllers.js      # Handles req/res for each route
+│
+├── services/
+│   └── studentsService.js          # Business logic and data validation
+│
+└── FONT/
+    ├── index.html                  # Frontend HTML
+    ├── script.js                   # Fetches and renders student cards
+    └── style.css                   # Styling
+```
 
-## Run it
+---
+
+## Tech Stack
+
+- **Runtime**: Node.js v24
+- **Framework**: Express 5
+- **Module system**: ES Modules (`"type": "module"` in package.json)
+- **Dev tool**: Nodemon (auto-restarts server on file save)
+- **CORS**: `cors` package to allow frontend requests from a different origin
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js v20 or higher
+- npm
+
+### Installation
 
 ```bash
-node index.js
+npm install
 ```
 
-If it works, you should see a success message in the terminal and a new `student_report.md` file appear next to `index.js`.
+### Running the server
 
-## Modules you will need
+```bash
+# Production
+npm run epita
 
-| Module | What it does                            |
-| ------ | --------------------------------------- |
-| `fs`   | Read and write files on your filesystem |
-| `path` | Build file paths that work on any OS    |
-
-Both are built into Node.js — just `require` them, no install needed.
-
-## Key functions
-
-- `fs.readFileSync(filePath, 'utf-8')` — reads a file and returns its contents as a string
-- `fs.writeFileSync(filePath, content, 'utf-8')` — writes a string to a file (creates it if it doesn't exist)
-- `JSON.parse(string)` — converts a JSON string into a JavaScript object
-- `path.join(__dirname, 'filename')` — builds a safe absolute path relative to the current script
-
-## Steps
-
-1. Require the `fs` and `path` modules
-2. Read `students.json` using `fs.readFileSync`
-3. Parse the JSON string into a JavaScript array using `JSON.parse`
-4. Build a Markdown string by looping over the students array
-5. Write the result to `student_report.md` using `fs.writeFileSync`
-
-## Expected output
-
-The generated `student_report.md` should look like this:
-
-```markdown
-# Student Report
-
-Generated on: 20/03/2026
-
-## Summary
-
-Total Students: 3
-
-## Student Details
-
-### Alice Martin
-
-- **Email:** alice.martin@epita.fr
-- **Major:** Computer Science
-- **GPA:** 3.8
-- **ID:** 1
-  ...
+# Development (with auto-restart via nodemon)
+npm run dev
 ```
 
-## Hints
+The server starts on `http://localhost:5500`.
 
-- `__dirname` is a Node.js variable that always points to the folder where your script lives — useful for building reliable file paths
-- `Array.forEach()` lets you loop over each student and append their info to your Markdown string
-- Template literals (backticks) make it easy to embed variables inside strings: `` `Hello ${name}` ``
+---
+
+## API Endpoints
+
+Base URL: `http://localhost:3000`
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/students` | Get all students |
+| GET | `/students/:id` | Get a single student by ID |
+| POST | `/students` | Create a new student |
+| PUT | `/students/:id` | Update an existing student |
+| DELETE | `/students/:id` | Delete a student |
+
+---
+
+## Validation Rules
+
+All fields are validated in `services/studentsService.js` before any data is created or updated.
+
+| Field | Rule |
+|-------|------|
+| `name` | Required. Letters, spaces, hyphens, and apostrophes only (accented characters supported) |
+| `email` | Required. Must match valid email format (e.g. `user@domain.com`) |
+| `major` | Required. Letters, spaces, hyphens, and apostrophes only |
+| `gpa` | Required. Must be a number between `0` and `4.0` |
+
+---
+
+## Architecture
+
+The project follows a three-layer separation of concerns:
+
+**Routes** — define which HTTP method and URL maps to which controller function
+
+**Controllers** — call the appropriate service function, and return the HTTP response.
+
+**Services** — contain all business logic and validation.
+
+---
+
+## Frontend
+
+Open `FONT/index.html` in a browser to view the student cards.
+
+> Make sure the backend server is running before opening the frontend.
+
+---
+
+## Notes
+
+- Data is stored in memory — changes made via POST, PUT, or DELETE will reset when the server restarts, as the source `students.json` is not written to disk
