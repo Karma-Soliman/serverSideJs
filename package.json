@@ -6,7 +6,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"epita": "node index.js",
-		"dev": "nodemon solut/index.js"
+		"dev": "nodemon index.js"
 	},
 	"repository": {
 		"type": "git",
@@ -15,7 +15,7 @@
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
-	"type": "commonjs",
+	"type": "module",
 	"bugs": {
 		"url": "https://github.com/web-rest-api/serverSideJs/issues"
 	},
