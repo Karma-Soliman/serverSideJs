@@ -1,4 +1,4 @@
-import { students } from "../students.js"
+import { students } from "../../DATA/students.js"
 
 export const findAllUsers = () => {
   if (!students || students.length === 0) {
