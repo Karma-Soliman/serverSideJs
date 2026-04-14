@@ -23,27 +23,23 @@ const isValidMajor = (major) => /^[a-zA-ZÀ-ÿ\s'-]+$/.test(major.trim())
 const isValidGpa = (gpa) => typeof gpa === "number" && gpa >= 0 && gpa <= 4.0
 
 const validateStudentData = (data) => {
-    const errors = []
+  const errors = []
 
-    if (!data.name || !isValidName(data.name)) {
-        errors.push(
-            "name can contain letters, spaces, hyphens, or apostrophes",
-        )
-    }
-    if (!data.email || !isValidEmail(data.email)) {
-        errors.push("email is required and must be a valid email address")
-    }
-    if (!data.major || !isValidMajor(data.major)) {
-        errors.push(
-            "major can contain letters, spaces, hyphens, or apostrophes",
-        )
-    }
-    if (data.gpa === undefined || data.gpa === null || !isValidGpa(data.gpa)) {
-        errors.push("GPA must be a number between 0 and 4.0")
-    }
+  if (!data.name || !isValidName(data.name)) {
+    errors.push("name can contain letters, spaces, hyphens, or apostrophes")
+  }
+  if (!data.email || !isValidEmail(data.email)) {
+    errors.push("email is required and must be a valid email address")
+  }
+  if (!data.major || !isValidMajor(data.major)) {
+    errors.push("major can contain letters, spaces, hyphens, or apostrophes")
+  }
+  if (data.gpa === undefined || data.gpa === null || !isValidGpa(data.gpa)) {
+    errors.push("GPA must be a number between 0 and 4.0")
+  }
 
-    return errors
-};
+  return errors
+}
 
 export const createStudentService = (data) => {
   const errors = validateStudentData(data)
