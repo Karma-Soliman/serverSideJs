@@ -9,10 +9,27 @@
 		<script defer src="./script.js"></script>
 	</head>
 	<body>
-		<h1>Students</h1>
-		<h2>EPITA — Computer Science</h2>
+		<div class="header">
+			<div>
+				<h1>Students</h1>
+				<h2>EPITA — Computer Science</h2>
+			</div>
+			<button id="add-student-btn" class="btn-primary">+ Add Student</button>
+		</div>
 		<section>
 			<div id="student-list"></div>
 		</section>
+
+		<!-- Student detail modal -->
+		<div id="modal-overlay" class="modal-overlay" hidden>
+			<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-name">
+				<button class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+				<div class="modal-avatar" id="modal-avatar"></div>
+				<h2 class="modal-name" id="modal-name"></h2>
+				<p class="modal-major" id="modal-major"></p>
+				<p class="modal-email" id="modal-email"></p>
+				<span class="modal-gpa" id="modal-gpa"></span>
+			</div>
+		</div>
 	</body>
 </html>
