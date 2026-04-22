@@ -1,26 +1,24 @@
 import express from "express";
 import cors from 'cors';
+import { connectToMongoDB } from "./config/db.js";
 
-import { studentRouter } from "./routes/studentsRoute.js"
+import { studentRouter } from "./routes/studentsRoute.js";
 
 const app = express();
 const port = 5500;
 
+await connectToMongoDB();
 
 app.use(cors());
 app.use(express.json());
-app.use("/students", studentRouter)
+app.use(express.urlencoded({ extended: true }));
+app.use("/api/students", studentRouter);
 
-const prof = [{ "my_json": "hi prof" }]
 
 app.get("/", (req, res) => {
-    res.json(prof);
+    res.send("Server is running ...");
 })
 
-//app.post("/", (req, res) => {
-//    const { test, firstName } = req.body
-//    res.json({test, firstName})
-//})
 
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`)
