@@ -6,7 +6,8 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"epita": "node BACK/index.js",
-		"dev": "nodemon BACK/index.js"
+		"dev": "nodemon BACK/index.js",
+		"seed": "node seed.js"
 	},
 	"repository": {
 		"type": "git",
