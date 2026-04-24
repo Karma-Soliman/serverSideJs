@@ -7,10 +7,15 @@ import { validateStudent } from "../middleware/validateStudent.js"
 
 export const studentRouter = express.Router()
 
-studentRouter.post("/signup", validateStudent,createStudent)
+studentRouter.post("/signup",   (req, res, next) => {
+    multerConfig(req, res, (err) => {
+      if (err) return res.status(400).json({ message: err.message })
+      next()
+    })
+  }, validateStudent,createStudent)
 studentRouter.get("/", getAllStudents)
 studentRouter.get("/:id", getStudentById)
-studentRouter.put("/:id", updateStudent)
+studentRouter.put("/:id", multerConfig, updateStudent) //update pfp
 studentRouter.delete("/:id", deleteStudent)
 
 
