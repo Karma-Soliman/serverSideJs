@@ -9,11 +9,11 @@ const port = 5500;
 
 await connectToMongoDB();
 
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/students", studentRouter);
+app.use(cors());
 app.use(express.static("public"))
+app.use("/api/students", studentRouter);
 
 app.get("/", (req, res) => {
     res.send("Server is running ...");
