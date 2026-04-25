@@ -1,5 +1,5 @@
 import express from "express"
-import { getAllStudents, getStudentById, createStudent, updateStudent, deleteStudent } from "../controllers/studentsControllers.js"
+import { getAllStudents, getStudentById, createStudent, updateStudent, deleteStudent, login } from "../controllers/studentsControllers.js"
 import multerConfig from "../middleware/multer-config.js"
 import { validateStudent } from "../middleware/validateStudent.js"
 import { authCheck } from "../middleware/auth-middleware.js"
@@ -19,5 +19,6 @@ studentRouter.get("/", authCheck, getAllStudents)
 studentRouter.get("/:id", authCheck, getStudentById)
 studentRouter.put("/:id", authCheck, multerConfig, updateStudent) //update pfp
 studentRouter.delete("/:id", authCheck, deleteStudent)
+studentRouter.post("/login", login)
 
 

@@ -1,4 +1,5 @@
 import User from "../models/userModel.js"
+import mongoose from "mongoose"
 import bcrypt from "bcrypt"
 import fs from "fs"
 
@@ -9,10 +10,12 @@ export const findAllUsers = async () => {
 }
 
 export const findUser = async (id) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) throw new Error("Invalid student ID")
   return await User.findById(id)
 }
 
 export const deleteStudentService = async (id) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) throw new Error("Invalid student ID")
   const user = await User.findById(id)
   if (!user) throw new Error("Student not found")
   if (user.image) {
@@ -28,6 +31,7 @@ export const createStudentService = async (data) => {
 }
 
 export const updateStudentService = async (id, data) => {
+    if (!mongoose.Types.ObjectId.isValid(id)) throw new Error("Invalid student ID")
   const user = await User.findById(id)
   if (!user) throw new Error("Student not found")
 
@@ -44,4 +48,12 @@ export const updateStudentService = async (id, data) => {
     returnDocument: "after",
     runValidators: true,
   })
+}
+
+export const loginService = async (email, password) => {
+  const user = await User.findOne({ email })
+  if (!user) throw new Error("User not found")
+  const isValid = await bcrypt.compare(password, user.password)
+  if (!isValid) throw new Error("Invalid password")
+  return user
 }

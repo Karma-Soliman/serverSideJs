@@ -3,9 +3,13 @@ import {
   findUser,
   createStudentService,
   updateStudentService,
-  deleteStudentService,
+  deleteStudentService, loginService
 } from "../services/studentsServiceMongoDB.js"
-import { toStudentDTO, studentListDTO, studentPublicDTO } from "../dto/studentDTO.js"
+import {
+  toStudentDTO,
+  studentListDTO,
+  studentPublicDTO,
+} from "../dto/studentDTO.js"
 import jwt from "jsonwebtoken"
 import "dotenv/config"
 
@@ -22,7 +26,7 @@ export const getStudentById = async (req, res) => {
   try {
     const student = await findUser(req.params.id)
     if (!student) return res.status(404).json({ message: "Student not found" })
-    
+
     res.status(200).json(studentPublicDTO(student))
   } catch (error) {
     res.status(404).json({ message: error.message })
@@ -35,20 +39,32 @@ export const createStudent = async (req, res) => {
     const imageUrl = req.file
       ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
       : null
-    const newStudent = await createStudentService({ name, email, password, gpa, major, image: imageUrl })
-    const token = jwt.sign({
-      id: newStudent._id
-    }, process.env.JWT_SECRET, {expiresIn: "24h"})
-    res.status(201).json({token, user: toStudentDTO(newStudent)})
+    const newStudent = await createStudentService({
+      name,
+      email,
+      password,
+      gpa,
+      major,
+      image: imageUrl,
+    })
+    const token = jwt.sign(
+      {
+        id: newStudent._id,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" },
+    )
+    res.status(201).json({ token, user: toStudentDTO(newStudent) })
   } catch (error) {
     res.status(400).json({ message: error.message })
   }
 }
 
 export const updateStudent = async (req, res) => {
-    console.log("req.file:", req.file)
-    console.log("req.body:", req.body)
   try {
+    if (req.auth.userId !== req.params.id) {
+      return res.status(403).json({ message: "You can only update your own profile" })
+    }
     const imageUrl = req.file
       ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
       : null
@@ -58,7 +74,10 @@ export const updateStudent = async (req, res) => {
     const student = await updateStudentService(req.params.id, data)
     res
       .status(200)
-      .json({ message: "Student updated successfully", data: toStudentDTO(student) })
+      .json({
+        message: "Student updated successfully",
+        data: toStudentDTO(student),
+      })
   } catch (error) {
     res.status(404).json({ message: error.message })
   }
@@ -66,9 +85,25 @@ export const updateStudent = async (req, res) => {
 
 export const deleteStudent = async (req, res) => {
   try {
+    if (req.auth.userId !== req.params.id) {
+      return res.status(403).json({ message: "You can only delete your own profile" })
+    }
     const deleted = await deleteStudentService(req.params.id)
     res.status(200).json({ message: "Student deleted successfully" })
   } catch (error) {
     res.status(404).json({ message: error.message })
+  }
+}
+
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body
+    const user = await loginService(email, password)
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    })
+    res.status(200).json({ token, user: studentPublicDTO(user) })
+  } catch (error) {
+    res.status(401).json({ message: error.message })
   }
 }
