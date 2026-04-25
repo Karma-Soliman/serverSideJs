@@ -6,6 +6,8 @@ import {
   deleteStudentService,
 } from "../services/studentsServiceMongoDB.js"
 import { toStudentDTO, studentListDTO, studentPublicDTO } from "../dto/studentDTO.js"
+import jwt from "jsonwebtoken"
+import "dotenv/config"
 
 export const getAllStudents = async (req, res) => {
   try {
@@ -34,7 +36,10 @@ export const createStudent = async (req, res) => {
       ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
       : null
     const newStudent = await createStudentService({ name, email, password, gpa, major, image: imageUrl })
-    res.status(201).json(toStudentDTO(newStudent))
+    const token = jwt.sign({
+      id: newStudent._id
+    }, process.env.JWT_SECRET, {expiresIn: "24h"})
+    res.status(201).json({token, user: toStudentDTO(newStudent)})
   } catch (error) {
     res.status(400).json({ message: error.message })
   }
