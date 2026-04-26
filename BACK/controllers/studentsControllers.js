@@ -102,7 +102,7 @@ export const login = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "24h",
     })
-    res.status(200).json({ token, user: studentPublicDTO(user) })
+    res.status(200).json({ token, user: toStudentDTO(user) })
   } catch (error) {
     res.status(401).json({ message: error.message })
   }
