@@ -1,7 +1,7 @@
 import fs from "fs"
 
 export const validateStudent = (req, res, next) => {
-    console.log("req.body:", req.body) // ← add this
+    console.log("req.body:", req.body) 
     console.log("req.file:", req.file)
   const { name, email, password, gpa, major } = req.body
 
