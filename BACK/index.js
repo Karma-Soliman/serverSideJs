@@ -3,7 +3,7 @@ import cors from 'cors';
 import { connectToMongoDB } from "./config/db.js";
 
 import { studentRouter } from "./routes/studentsRoute.js";
-
+import { courseRouter } from "./routes/courseRoute.js"
 const app = express();
 const port = 5500;
 
@@ -14,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static("public"))
 app.use("/api/students", studentRouter);
+app.use("/api/courses", courseRouter)
 
 app.get("/", (req, res) => {
     res.send("Server is running ...");
