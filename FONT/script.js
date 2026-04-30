@@ -1,78 +1,100 @@
-const BACKEND_URL = "http://localhost:5500/api/students"
+const BASE_URL = "http://localhost:5500/api/students"
 
-const fetchStudents = async () => {
-  const response = await fetch(`${BACKEND_URL}`)
-  if (!response.ok) throw new Error(`Server error: ${response.status}`)
-  const data = await response.json()
-  // support both array responses and { students: [...] } shaped responses
-  return Array.isArray(data) ? data : data.students
+// If already logged in, skip the auth page
+if (localStorage.getItem("token")) {
+  window.location.href = "./students.html"
 }
 
-const getInitials = (name) =>
-  name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase()
-
-const openModal = (student) => {
-  document.getElementById("modal-avatar").textContent = getInitials(
-    student.name,
-  )
-  document.getElementById("modal-name").textContent = student.name
-  document.getElementById("modal-major").textContent = student.major
-  document.getElementById("modal-email").textContent = student.email
-  document.getElementById("modal-gpa").textContent =
-    `GPA ${student.gpa.toFixed(1)}`
-  document.getElementById("modal-overlay").removeAttribute("hidden")
+function switchTab(tab) {
+  const isLogin = tab === "login"
+  document.getElementById("login-form").hidden = !isLogin
+  document.getElementById("signup-form").hidden = isLogin
+  document.getElementById("tab-login").classList.toggle("active", isLogin)
+  document.getElementById("tab-signup").classList.toggle("active", !isLogin)
 }
 
-const closeModal = () => {
-  document.getElementById("modal-overlay").setAttribute("hidden", "")
+const showError = (id, msg) => {
+  const el = document.getElementById(id)
+  el.textContent = msg
+  el.hidden = false
 }
 
+const hideError = (id) => {
+  document.getElementById(id).hidden = true
+}
+
+// update file input label when file is chosen
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("modal-close").addEventListener("click", closeModal)
-  document.getElementById("modal-overlay").addEventListener("click", (e) => {
-    if (e.target === e.currentTarget) closeModal()
+  const fileInput = document.getElementById("signup-image")
+  fileInput.addEventListener("change", () => {
+    const label = document.getElementById("file-label-text")
+    label.textContent = fileInput.files[0]
+      ? fileInput.files[0].name
+      : "Choose a photo…"
   })
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal()
-  })
-  document.getElementById("add-student-btn").addEventListener("click", () => {
-    const overlay = document.getElementById("modal-overlay")
-    if (overlay.hasAttribute("hidden")) overlay.removeAttribute("hidden")
-    else closeModal()
-  })
+
+  // ── Login ────────────────────────────────────────────────────
+  document
+    .getElementById("login-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault()
+      hideError("login-error")
+
+      const email = document.getElementById("login-email").value
+      const password = document.getElementById("login-password").value
+
+      try {
+        const res = await fetch(`${BASE_URL}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.message || "Login failed")
+        localStorage.setItem("token", data.token)
+        localStorage.setItem("userId", data.user.id)
+        window.location.href = "./students.html"
+      } catch (err) {
+        showError("login-error", err.message)
+      }
+    })
+
+  // ── Signup ───────────────────────────────────────────────────
+  document
+    .getElementById("signup-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault()
+      hideError("signup-error")
+
+      const name = document.getElementById("signup-name").value
+      const email = document.getElementById("signup-email").value
+      const password = document.getElementById("signup-password").value
+      const major = document.getElementById("signup-major").value
+      const gpa = document.getElementById("signup-gpa").value
+      const imageFile = document.getElementById("signup-image").files[0]
+
+      // use FormData — backend uses multer (multipart/form-data)
+      const formData = new FormData()
+      formData.append("name", name)
+      formData.append("email", email)
+      formData.append("password", password)
+      formData.append("major", major)
+      formData.append("gpa", gpa)
+      if (imageFile) formData.append("image", imageFile)
+
+      try {
+        const res = await fetch(`${BASE_URL}/signup`, {
+          method: "POST",
+          // no Content-Type header — browser sets it automatically with boundary
+          body: formData,
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.message || "Signup failed")
+        localStorage.setItem("token", data.token)
+        localStorage.setItem("userId", data.user.id)
+        window.location.href = "./students.html"
+      } catch (err) {
+        showError("signup-error", err.message)
+      }
+    })
 })
-
-const createCard = (student) => {
-  const card = document.createElement("div")
-  card.className = "card"
-  card.style.cursor = "pointer"
-  card.innerHTML = `
-		<div class="card-avatar">${getInitials(student.name)}</div>
-		<div class="card-name">${student.name}</div>
-		<div class="card-major">${student.major}</div>
-		<div class="card-email">${student.email}</div>
-		<span class="card-gpa">GPA ${student.gpa.toFixed(1)}</span>
-	`
-  card.addEventListener("click", () => openModal(student))
-  return card
-}
-
-const displayStudents = async () => {
-  const studentList = document.getElementById("student-list")
-  try {
-    const students = await fetchStudents()
-    if (!students) throw new Error("No students found")
-    if (students.length === 0) throw new Error("No students found")
-    studentList.innerHTML = ""
-    students.forEach((student) => studentList.appendChild(createCard(student)))
-  } catch (error) {
-    studentList.innerHTML = `<p class="error">Could not load students: ${error.message}</p>`
-    console.error("Error fetching students:", error)
-  }
-}
-
-displayStudents()
