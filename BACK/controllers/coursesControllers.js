@@ -44,10 +44,10 @@ export const updateCourse = async (req, res) => {
   try {
     const { title, description, credits, instructor } = req.body
     const data = {}
-      if (title) data.title = title
-      if (description) data.description = description
+      if (title) data.title = title.trim()
+      if (description) data.description = description.trim()
       if (credits) data.credits = Number(credits)
-      if (instructor) data.instructor = instructor
+      if (instructor) data.instructor = instructor.trim()
     const course = await updateCourseService(req.params.id, data)
     res
       .status(200)
