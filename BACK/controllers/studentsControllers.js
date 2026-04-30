@@ -27,7 +27,8 @@ export const getStudentById = async (req, res) => {
     const student = await findUser(req.params.id)
     if (!student) return res.status(404).json({ message: "Student not found" })
 
-    res.status(200).json(studentPublicDTO(student))
+    const isOwnProfile = String(req.auth.userId) === String(req.params.id)
+    res.status(200).json(isOwnProfile ? toStudentDTO(student) : studentPublicDTO(student))
   } catch (error) {
     res.status(404).json({ message: error.message })
   }
