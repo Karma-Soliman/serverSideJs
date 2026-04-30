@@ -3,7 +3,7 @@ import cors from 'cors';
 import { connectToMongoDB } from "./config/db.js";
 
 import { studentRouter } from "./routes/studentsRoute.js";
-import { courseRouter } from "./routes/courseRoute.js"
+import { courseRouter } from "./routes/coursesRoute.js"
 import { enrollmentRouter } from "./routes/enrollmentRoute.js"
 
 

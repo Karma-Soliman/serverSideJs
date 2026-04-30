@@ -18,14 +18,13 @@ const enrollmentSchema = new mongoose.Schema(
     },
     grade: {
       type: Number,
-      required: true,
       min: [0, "grade must be at least 0"],
-        max: [20, "grade cannot exceed 20"],
+      max: [20, "grade cannot exceed 20"],
       default: null,
     },
     status: {
-        type: String,
-        enam:["enrolled", "completed", "dropped"],
+      type: String,
+      enum: ["enrolled", "completed", "dropped"],
       required: true,
     },
   },

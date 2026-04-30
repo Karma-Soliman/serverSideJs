@@ -9,9 +9,8 @@ export const enrollmentRouter = express.Router()
 
 
 enrollmentRouter.get("/", authCheck, getAllEnrollment)
-enrollmentRouter.get("student/:studentId", authCheck, getEnrollmentByStudent)
+enrollmentRouter.get("/student/:studentId", authCheck, getEnrollmentByStudent)
 enrollmentRouter.get("/:id", authCheck, getEnrollmentById)
 enrollmentRouter.post("/", authCheck, validateEnrollment, createEnrollment)
 enrollmentRouter.put("/:id", authCheck, updateEnrollment)
 enrollmentRouter.delete("/:id", authCheck, deleteEnrollment)
-
