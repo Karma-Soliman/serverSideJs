@@ -3,7 +3,7 @@ import {
   findCourse,
   createCourseService,
   updateCourseService,
-  deleteCourseService, loginService
+  deleteCourseService
 } from "../services/coursesServicesMongoDB.js"
 
 export const getAllCourses = async (req, res) => {
