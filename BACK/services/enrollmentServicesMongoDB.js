@@ -6,20 +6,20 @@ const isValidId = (id) => mongoose.Types.ObjectId.isValid(id)
 export const findAllEnrollment = async () => {
   return await Enrollment.find({})
     .populate("student", "name email")
-    .populate("course", "title instructor, credits")//pulls fields from user and course
+    .populate("course", "title instructor credits")//pulls fields from user and course
 }
 
 export const findEnrollmentById = async (id) => {
   if (!isValidId(id)) throw new Error("Invalid enrollment ID")
   return await Enrollment.findById(id)
     .populate("student", "name email")
-    .populate("course", "title instructor, credits")
+    .populate("course", "title instructor credits")
 }
 
 export const findEnrollmentByStudent = async (studentId) => {
-  if (!isValidId(id)) throw new Error("Invalid enrollment ID")
+  if (!isValidId(studentId)) throw new Error("Invalid student ID")
   return await Enrollment.find({student: studentId})
-    .populate("course", "title instructor, credits")
+    .populate("course", "title instructor credits")
 }
 
 export const deleteEnrollmentService = async (id) => {
