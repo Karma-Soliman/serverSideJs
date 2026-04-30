@@ -1,9 +1,11 @@
+import mongoose from "mongoose"
+
 export const validateEnrollment = (req, res, next) => {
   const { student, course, semester, grade, status } = req.body
 
     const reject = (message) => res.status(400).json({ message })
     
-  const valid_status = ["enrolled", "completed", "dropped"]
+  const validStatuses = ["enrolled", "completed", "dropped"]
   const semester_regex = /^(Fall|Spring|Summer)\s(20\d{2})$/
 
   if (!student) return reject("Student ID is required")
@@ -26,8 +28,8 @@ export const validateEnrollment = (req, res, next) => {
       "Semester must be in format: Fall 2024, Spring 2025, or Summer 2025",
     )
 
-  if (status && !VALID_STATUSES.includes(status))
-    return reject(`Status must be one of: ${VALID_STATUSES.join(", ")}`)
+  if (status && !validStatuses.includes(status))
+    return reject(`Status must be one of: ${validStatuses.join(", ")}`)
 
   next()
 }
