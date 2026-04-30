@@ -8,12 +8,12 @@ export const findAllCourses = async () => {
 }
 
 export const findCourse = async (id) => {
-    if (!isValid(id)) throw new Error("Invalid course ID")
+    if (!isValidId(id)) throw new Error("Invalid course ID")
   return await Course.findById(id)
 }
 
 export const deleteCourseService = async (id) => {
-    if (!isValid(id)) throw new Error("Invalid course ID")
+    if (!isValidId(id)) throw new Error("Invalid course ID")
   const course = await Course.findById(id)
   if (!course) throw new Error("Course not found")
   return await Course.findByIdAndDelete(id)
@@ -24,7 +24,7 @@ export const createCourseService = async (data) => {
 }
 
 export const updateCourseService = async (id, data) => {
-    if (!isValid(id)) throw new Error("Invalid course ID")
+    if (!isValidId(id)) throw new Error("Invalid course ID")
   const course = await Course.findById(id)
   if (!course) throw new Error("Course not found")
 
