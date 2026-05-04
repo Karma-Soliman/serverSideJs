@@ -11,7 +11,7 @@ export const getAllCourses = async (req, res) => {
     const courses = await findAllCourses()
     res.status(200).json(courses)
   } catch (error) {
-    res.status(404).json({ message: error.message })
+    res.status(500).json({ message: error.message })
   }
 }
 
